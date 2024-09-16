@@ -2,6 +2,7 @@ from anthropic import Anthropic
 from dotenv import load_dotenv
 import os
 import time
+import base64
 
 load_dotenv()
 
@@ -32,6 +33,8 @@ def translate(text:str,target_language:str='English'):
 # 		'content':'What flavors are used in Dr. Pepper?'
 # 	}]
 # )
+
+# print(translate('helo', 'French'))
 
 # putting words in Claude's mouth 
 
@@ -92,26 +95,58 @@ def translate(text:str,target_language:str='English'):
 
 # stream
 
-start_time = time.time()
+# start_time = time.time()
 
-stream = client.messages.create(
+# stream = client.messages.create(
+#     model='claude-3-5-sonnet-20240620',
+#     max_tokens=1000,
+#     stream=True,
+#     messages=[{
+#         'role':'user',
+#         'content':'What is the meaning of life?'
+#     }]
+# )
+
+# first_receive_time = time.time()
+
+# for event in stream:
+#     if event.type == 'content_block_delta':
+#         print(event.delta.text,flush=True,end='')
+
+# end_time = time.time()
+
+# print(f"Time taken to receive first response: {first_receive_time-start_time} seconds")
+# print(f"Time taken to receive all responses: {end_time-first_receive_time} seconds")
+
+# vision capabilities
+
+with open('d:\\projects\\claude\\images\\images.jpg','rb') as image_file:
+    binary_data = image_file.read()
+    base64_data = base64.b64encode(binary_data)
+    base64_string = base64_data.decode('utf-8')
+
+response = client.messages.create(
     model='claude-3-5-sonnet-20240620',
     max_tokens=1000,
-    stream=True,
-    messages=[{
-        'role':'user',
-        'content':'What is the meaning of life?'
-    }]
+    messages=[
+        {
+            'role':'user',
+            'content':[
+                {
+                    'type':'image',
+                    'source':{
+                    'type':'base64',
+                    'data':base64_string,
+                    'media_type':'image/jpeg'
+                    }
+                },
+                {
+                    'type':'text',
+                    'text':'How many people in this picture? respond with a number.'
+                }
+             ]
+        }
+    ]
 )
 
-first_receive_time = time.time()
-
-for event in stream:
-    if event.type == 'content_block_delta':
-        print(event.delta.text,flush=True,end='')
-
-end_time = time.time()
-
-print(f"Time taken to receive first response: {first_receive_time-start_time} seconds")
-print(f"Time taken to receive all responses: {end_time-first_receive_time} seconds")
-# print(translate('helo', 'French'))
+print(response.content[0].text)
