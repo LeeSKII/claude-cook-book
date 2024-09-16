@@ -1,6 +1,7 @@
 from anthropic import Anthropic
 from dotenv import load_dotenv
 import os
+import time
 
 load_dotenv()
 
@@ -62,16 +63,55 @@ def translate(text:str,target_language:str='English'):
 
 # stop_sequence
 
-response = client.messages.create(
-	model='claude-3-5-sonnet-20240620',
-	max_tokens=10,
-	messages=[{
-		'role':'user',
-		'content':'Generate a json object representing a person with the following properties:name,age.'
-	}],
-	stop_sequences=['}']
-)
-print(response.content[0].text)
-print(response.stop_reason)
+# response = client.messages.create(
+# 	model='claude-3-5-sonnet-20240620',
+# 	max_tokens=10,
+# 	messages=[{
+# 		'role':'user',
+# 		'content':'Generate a json object representing a person with the following properties:name,age.'
+# 	}],
+# 	stop_sequences=['}']
+# )
+# print(response.content[0].text)
+# print(response.stop_reason)
 
+# system prompts
+
+# response = client.messages.create(
+# 	model='claude-3-5-sonnet-20240620',
+# 	max_tokens=1000,
+#     system='you are a language tutorial bot, respond every question with French.',
+# 	messages=[{
+# 		'role':'user',
+# 		'content':'give me a definition of cold with a French translation.'
+# 	}],
+# 	stop_sequences=['}']
+# )
+# print(response.content[0].text)
+# print(response.stop_reason)
+
+# stream
+
+start_time = time.time()
+
+stream = client.messages.create(
+    model='claude-3-5-sonnet-20240620',
+    max_tokens=1000,
+    stream=True,
+    messages=[{
+        'role':'user',
+        'content':'What is the meaning of life?'
+    }]
+)
+
+first_receive_time = time.time()
+
+for event in stream:
+    if event.type == 'content_block_delta':
+        print(event.delta.text,flush=True,end='')
+
+end_time = time.time()
+
+print(f"Time taken to receive first response: {first_receive_time-start_time} seconds")
+print(f"Time taken to receive all responses: {end_time-first_receive_time} seconds")
 # print(translate('helo', 'French'))
