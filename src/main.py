@@ -4,6 +4,7 @@ import os
 import time
 import base64
 from pathlib import Path
+from helper import create_image_message
 
 load_dotenv()
 
@@ -147,30 +148,9 @@ response = client.messages.create(
                 #     'media_type':'image/jpeg'
                 #     }
                 # },
-                {
-                    'type':'image',
-                    'source':{
-                    'type':'base64',
-                    'data':base64_animal1,
-                    'media_type':'image/png'
-                    }
-                },
-                {
-                    'type':'image',
-                    'source':{
-                    'type':'base64',
-                    'data':base64_animal2,
-                    'media_type':'image/png'
-                    }
-                },
-                {
-                    'type':'image',
-                    'source':{
-                    'type':'base64',
-                    'data':base64_animal3,
-                    'media_type':'image/png'
-                    }
-                },
+                create_image_message('./images/a1.png'),
+                create_image_message('./images/a2.png'),
+                create_image_message('./images/a3.png'),
                 {
                     'type':'text',
                     'text':'How are these images different?'
