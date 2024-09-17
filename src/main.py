@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 import os
 import time
 import base64
+from pathlib import Path
 
 load_dotenv()
 
@@ -120,10 +121,16 @@ def translate(text:str,target_language:str='English'):
 
 # vision capabilities
 
-with open('d:\\projects\\claude\\images\\images.jpg','rb') as image_file:
-    binary_data = image_file.read()
-    base64_data = base64.b64encode(binary_data)
-    base64_string = base64_data.decode('utf-8')
+# with open('d:/projects/claude/images/images.jpg','rb') as image_file:
+#     binary_data = image_file.read()
+#     base64_data = base64.b64encode(binary_data)
+#     base64_string = base64_data.decode('utf-8')
+    
+base64_string = base64.b64encode(Path('./images/images.jpg').absolute().read_bytes()).decode('utf-8')
+
+base64_animal1 = base64.b64encode(Path('./images/a1.png').absolute().read_bytes()).decode('utf-8')
+base64_animal2 = base64.b64encode(Path('./images/a2.png').absolute().read_bytes()).decode('utf-8')
+base64_animal3 = base64.b64encode(Path('./images/a3.png').absolute().read_bytes()).decode('utf-8')
 
 response = client.messages.create(
     model='claude-3-5-sonnet-20240620',
@@ -132,18 +139,46 @@ response = client.messages.create(
         {
             'role':'user',
             'content':[
+                # {
+                #     'type':'image',
+                #     'source':{
+                #     'type':'base64',
+                #     'data':base64_string,
+                #     'media_type':'image/jpeg'
+                #     }
+                # },
                 {
                     'type':'image',
                     'source':{
                     'type':'base64',
-                    'data':base64_string,
-                    'media_type':'image/jpeg'
+                    'data':base64_animal1,
+                    'media_type':'image/png'
+                    }
+                },
+                {
+                    'type':'image',
+                    'source':{
+                    'type':'base64',
+                    'data':base64_animal2,
+                    'media_type':'image/png'
+                    }
+                },
+                {
+                    'type':'image',
+                    'source':{
+                    'type':'base64',
+                    'data':base64_animal3,
+                    'media_type':'image/png'
                     }
                 },
                 {
                     'type':'text',
-                    'text':'How many people in this picture? respond with a number.'
+                    'text':'How are these images different?'
                 }
+                # {
+                #     'type':'text',
+                #     'text':'How many people in this picture? respond with a number.'
+                # }
              ]
         }
     ]
