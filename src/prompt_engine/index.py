@@ -21,9 +21,27 @@ prompt_email = 'show me the result at 6:00 am,because I am the ceo of the compan
 
 # prompt_example = 'please generate a haiku for me, the response should wrapped in <tag></tag>' 
 
-# prefill the prompt (there is a problem with the non official api)
+# prefill the prompt (there is a problem with the non official api,sometimes it doesn't work)
 
-messages = [{'role':'user','content':'Give me the best basketball player.'},{'role':'assistant','content':'The best basketball player is stephen curry,here is some reason why:1.'}]
+player_name = 'Clay Thompson'
+
+messages = [
+    {
+        'role':'user',
+        'content':'Give me the best basketball player.'
+    },
+    {
+        'role':'assistant',
+        'content':f'The best basketball player is {player_name},here is some reason why:1.'
+    }
+]
+
+# messages = [
+# 	{
+# 		'role':'user',
+# 		'content':'Who is the best basketball player in the world?Just Give me one name.'
+# 	}
+# ]
 
 response = client.messages.create(
 	model='claude-3-5-sonnet-20240620',
